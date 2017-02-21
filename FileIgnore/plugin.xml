@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin version="php">
 <id>FileIgnore</id>
-<name>打包时排除文件</name>
+<name>应用打包时排除文件</name>
 <url>https://app.zblogcn.com/?auth=80</url>
-<note>打包时排除文件</note>
-<description></description>
+<note>打包zba时排除指定文件</note>
+<description>置百丈玄冰而崩裂，掷须臾池水而漂摇。</description>
 <path></path>
 <include>include.php</include>
 <level>1</level>
@@ -23,7 +23,7 @@
 <pubdate>2017-02-16</pubdate>
 <modified>2017-02-16</modified>
 <price>10.24</price>
-<phpver>5.2</phpver>
+<phpver>5.4</phpver>
 <advanced>
   <dependency></dependency>
   <rewritefunctions></rewritefunctions>
