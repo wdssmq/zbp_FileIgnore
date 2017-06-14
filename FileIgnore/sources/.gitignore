@@ -1,7 +1,8 @@
-build
 input/*
+build
 config
 db
+log
 cache
 #Test
 #/just/testing/dir1/*.html
