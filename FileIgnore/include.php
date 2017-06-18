@@ -5,7 +5,6 @@ function ActivePlugin_FileIgnore()
 {
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_main');
 }
-require_once('ignorepath.php');
 function FileIgnore_main($app, &$dirs, &$files)
 {
   global $zbp;
@@ -16,28 +15,30 @@ function FileIgnore_main($app, &$dirs, &$files)
   if (!file_exists($IgnorePath)) {
     $IgnorePath = $FileIgnorePath . ".gitignore";
   }
-  $parser  = new IgnorePath('', $IgnorePath);
+  $parser = FileIgnore_getIgnoreFilses($IgnorePath);
+  // var_dump($parser);
+
   $LogPath = $FileIgnorePath . "cache/log.txt";
   file_put_contents($LogPath, "");
-  // file_put_contents($LogPath, json_encode($files));
+  file_put_contents($LogPath, json_encode($parser)."\n");
   for ($i = 0; $i < count($dirs); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
-    if ($parser->checkPath(str_replace($AppPath, "", $dirs[$i]))) {
+    if (in_array(trim($dirs[$i],"/"),$parser)) {
       file_put_contents($LogPath, $dirs[$i] . " 排除\n\n", FILE_APPEND);
       $dirs[$i] = "";
-    } else{
-      file_put_contents($LogPath, $dirs[$i] . " 打包\n\n", FILE_APPEND);      
+    } else {
+      file_put_contents($LogPath, $dirs[$i] . " 打包\n\n", FILE_APPEND);
     }
   }
   file_put_contents($LogPath, "------\n\n", FILE_APPEND);
   for ($i = 0; $i < count($files); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
-    if ($parser->checkPath(str_replace($AppPath, "", $files[$i])) || $IgnorePath == $files[$i]) {
+    // in_array(dirname($files[$i]), $parser) || 
+    if (in_array($files[$i],$parser) || $IgnorePath == $files[$i]) {
       file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
       $files[$i] = "";
     } elseif (!in_array(dirname($files[$i]) . "/", $dirs) && dirname($files[$i]) . "/" != $AppPath) {
-      file_put_contents($LogPath, dirname($files[$i]) . "/\n", FILE_APPEND);
-      file_put_contents($LogPath, $files[$i] . "\n", FILE_APPEND);
+      file_put_contents($LogPath, $files[$i] . " 打包\n\n", FILE_APPEND);
       $dirs[] = dirname($files[$i]) . "/";
     } else {
       file_put_contents($LogPath, $files[$i] . " 打包\n\n", FILE_APPEND);
@@ -45,6 +46,26 @@ function FileIgnore_main($app, &$dirs, &$files)
   }
   $dirs = FileIgnore_ClearArray($dirs);
   $files = FileIgnore_ClearArray($files);
+  // die();
+}
+function FileIgnore_getIgnoreFilses($file) { # $file = '/absolute/path/to/.gitignore'
+  $dir = dirname($file);
+  $matches = array();
+  $lines = file($file);
+  foreach ($lines as $line) {
+    $line = trim($line);
+    if ($line === '') continue;                 # empty line
+    if (substr($line, 0, 1) == '#') continue;   # a comment
+    if (substr($line, 0, 1) == '!') {           # negated glob
+      $line = substr($line, 1);
+      $files = array_diff(glob("$dir/*"), glob("$dir/$line"));
+    } else {                                    # normal glob
+      $files = array_merge(glob("$dir/$line"),glob("$dir/$line/*"));
+      // $files = glob("$dir/$line");
+    }
+    $matches = array_merge($matches, $files);
+  }
+  return $matches;
 }
 function FileIgnore_ClearArray($arr){
   $result = array();
