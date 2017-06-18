@@ -11,12 +11,10 @@ function FileIgnore_main($app, &$dirs, &$files)
   // InstallPlugin_FileIgnore();
   $FileIgnorePath = plugin_dir_path(__FILE__);
   $AppPath        = $app->GetDir();
-  $IgnorePath     = $AppPath . ".gitignore";
-  if (!file_exists($IgnorePath)) {
-    $IgnorePath = $FileIgnorePath . ".gitignore";
-  }
-  $parser = FileIgnore_getIgnoreFilses($IgnorePath);
-  // var_dump($parser);
+  $parser = array($FileIgnorePath . ".gitignore",$AppPath . ".gitignore");
+  $parser = FileIgnore_getIgnoreFilses($FileIgnorePath . ".gitignore",$AppPath,$parser);
+  $parser = FileIgnore_getIgnoreFilses($AppPath . ".gitignore",$AppPath,$parser);
+  //var_dump($parser);
 
   $LogPath = $FileIgnorePath . "cache/log.txt";
   file_put_contents($LogPath, "");
@@ -34,7 +32,7 @@ function FileIgnore_main($app, &$dirs, &$files)
   for ($i = 0; $i < count($files); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
     // in_array(dirname($files[$i]), $parser) || 
-    if (in_array($files[$i],$parser) || $IgnorePath == $files[$i]) {
+    if (in_array($files[$i],$parser)) {
       file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
       $files[$i] = "";
     } elseif (!in_array(dirname($files[$i]) . "/", $dirs) && dirname($files[$i]) . "/" != $AppPath) {
@@ -48,10 +46,9 @@ function FileIgnore_main($app, &$dirs, &$files)
   $files = FileIgnore_ClearArray($files);
   // die();
 }
-function FileIgnore_getIgnoreFilses($file) { # $file = '/absolute/path/to/.gitignore'
-  $dir = dirname($file);
-  $matches = array();
-  $lines = file($file);
+function FileIgnore_getIgnoreFilses($rulFile,$dir,$matches = array()) { # $file = '/absolute/path/to/.gitignore'
+  $dir = trim($dir,"/");
+  $lines = file($rulFile);
   foreach ($lines as $line) {
     $line = trim($line);
     if ($line === '') continue;                 # empty line
@@ -65,7 +62,7 @@ function FileIgnore_getIgnoreFilses($file) { # $file = '/absolute/path/to/.gitig
     }
     $matches = array_merge($matches, $files);
   }
-  return $matches;
+  return array_unique($matches);
 }
 function FileIgnore_ClearArray($arr){
   $result = array();
