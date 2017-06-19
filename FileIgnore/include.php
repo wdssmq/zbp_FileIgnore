@@ -13,7 +13,9 @@ function FileIgnore_main($app, &$dirs, &$files)
   $AppPath        = $app->GetDir();
   $parser = array($FileIgnorePath . ".gitignore",$AppPath . ".gitignore");
   $parser = FileIgnore_getIgnoreFilses($FileIgnorePath . ".gitignore",$AppPath,$parser);
-  $parser = FileIgnore_getIgnoreFilses($AppPath . ".gitignore",$AppPath,$parser);
+  if (is_file($AppPath . ".gitignore")) {
+    $parser = FileIgnore_getIgnoreFilses($AppPath . ".gitignore",$AppPath,$parser);
+  }
   //var_dump($parser);
 
   $LogPath = $FileIgnorePath . "cache/log.txt";
@@ -31,7 +33,7 @@ function FileIgnore_main($app, &$dirs, &$files)
   file_put_contents($LogPath, "------\n\n", FILE_APPEND);
   for ($i = 0; $i < count($files); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
-    // in_array(dirname($files[$i]), $parser) || 
+    // in_array(dirname($files[$i]), $parser) ||
     if (in_array($files[$i],$parser)) {
       file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
       $files[$i] = "";
