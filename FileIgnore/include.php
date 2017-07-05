@@ -34,7 +34,7 @@ function FileIgnore_main($app, &$dirs, &$files)
   for ($i = 0; $i < count($files); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
     // in_array(dirname($files[$i]), $parser) ||
-    if (in_array($files[$i],$parser)) {
+    if (in_array($files[$i],$parser) || in_array(dirname($files[$i]),$parser)) {
       file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
       $files[$i] = "";
     } elseif (!in_array(dirname($files[$i]) . "/", $dirs) && dirname($files[$i]) . "/" != $AppPath) {
