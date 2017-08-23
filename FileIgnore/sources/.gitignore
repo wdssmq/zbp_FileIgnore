@@ -3,4 +3,4 @@ build
 config
 db
 cache
-log
+usr/*
