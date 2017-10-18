@@ -16,7 +16,7 @@ function FileIgnore_main($app, &$dirs, &$files)
   if (is_file($AppPath . ".gitignore")) {
     $parser = FileIgnore_getIgnoreFilses($AppPath . ".gitignore",$AppPath,$parser);
   }
-  //var_dump($parser);
+  // var_dump($parser);
 
   $LogPath = $FileIgnorePath . "cache/log.txt";
   file_put_contents($LogPath, "");
@@ -48,21 +48,25 @@ function FileIgnore_main($app, &$dirs, &$files)
   $files = FileIgnore_ClearArray($files);
   // die();
 }
-function FileIgnore_getIgnoreFilses($rulFile,$dir,$matches = array()) { # $file = '/absolute/path/to/.gitignore'
+function FileIgnore_getIgnoreFilses($rulFile,$dir,$matches = array()) {
   $dir = trim($dir,"/");
   $lines = file($rulFile);
   foreach ($lines as $line) {
+    // var_dump($matches);
     $line = trim($line);
     if ($line === '') continue;                 # empty line
     if (substr($line, 0, 1) == '#') continue;   # a comment
     if (substr($line, 0, 1) == '!') {           # negated glob
       $line = substr($line, 1);
-      $files = array_diff(glob("$dir/*"), glob("$dir/$line"));
+      $files = array_merge(glob("$dir/$line"),glob("$dir/$line/*"));
+      $matches = array_diff($matches, $files);
     } else {                                    # normal glob
       $files = array_merge(glob("$dir/$line"),glob("$dir/$line/*"));
       // $files = glob("$dir/$line");
     }
+    // var_dump($files);
     $matches = array_merge($matches, $files);
+    // var_dump($matches);
   }
   return array_unique($matches);
 }
