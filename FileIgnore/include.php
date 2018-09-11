@@ -8,7 +8,7 @@ function ActivePlugin_FileIgnore()
 function FileIgnore_main($app, &$dirs, &$files)
 {
   global $zbp;
-  // InstallPlugin_FileIgnore();
+  InstallPlugin_FileIgnore();
   $FileIgnorePath = plugin_dir_path(__FILE__);
   $AppPath        = $app->GetDir();
   $parser = array($FileIgnorePath . ".gitignore",$AppPath . ".gitignore");
