@@ -2,7 +2,7 @@
 <plugin version="php">
 <id>FileIgnore</id>
 <name>应用打包时排除文件</name>
-<url>https://app.zblogcn.com/?auth=80</url>
+<url>//jq.qq.com/?_wv=1027&amp;k=5sE9rKH</url>
 <note>打包zba时排除指定文件</note>
 <description>置百丈玄冰而崩裂，掷须臾池水而漂摇。</description>
 <path></path>
@@ -11,7 +11,7 @@
 <author>
   <name>沉冰浮水</name>
   <email>wdssmq@qq.com</email>
-  <url>http://www.wdssmq.com</url>
+  <url>https://www.wdssmq.com</url>
 </author>
 <source>
   <name></name>
@@ -21,8 +21,8 @@
 <adapted>151740</adapted>
 <version>0.2</version>
 <pubdate>2017-02-16</pubdate>
-<modified>2017-07-05</modified>
-<price>10.24</price>
+<modified>2019-06-03</modified>
+<price>0</price>
 <phpver>5.4</phpver>
 <advanced>
   <dependency></dependency>
