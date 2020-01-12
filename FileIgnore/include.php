@@ -3,8 +3,40 @@
 RegisterPlugin("FileIgnore", "ActivePlugin_FileIgnore");
 function ActivePlugin_FileIgnore()
 {
+  Add_Filter_Plugin('Filter_Plugin_Cmd_Begin', 'FileIgnore_PluginEnb');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_main');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_update');
+}
+function FileIgnore_PluginEnb()
+{
+  global $zbp;
+  if (GetVars('act', 'GET') !== "PluginEnb") {
+    return false;
+  }
+  $app = new App();
+  if ($app->LoadInfoByXml('plugin', GetVars('name', 'GET')) === true) {
+    $ID = $app->id;
+    $dir = $app->GetDir();
+    $ad = explode('|', $app->advanced_dependency);
+    // 遍历依赖插件并启用
+    foreach ($ad as $d) {
+      if (!$d) {
+        continue;
+      }
+      EnablePlugin($d);
+    }
+    // 自动生存工作区文件
+    $fileVSCode = "{$dir}{$ID}.code-workspace";
+    $usrVSCode = FileIgnore_Path("vscode");
+    if (!is_file($fileVSCode) && is_file($usrVSCode)) {
+      $conVSCode = file_get_contents($usrVSCode);
+      $conVSCode = str_replace("-zbp_path-", str_replace("\\", '\\\\', ZBP_PATH), $conVSCode);
+      file_put_contents($fileVSCode, $conVSCode);
+    }
+  }
+  // 应用中心开发模式开启
+  $zbp->Config('AppCentre')->enabledevelop = true;
+  $zbp->SaveConfig('AppCentre');
 }
 function FileIgnore_update($app, &$dirs, &$files)
 {
@@ -92,6 +124,27 @@ function FileIgnore_ClearArray($arr)
   }
   return $result;
 }
+function FileIgnore_Path($file, $t = 'path')
+{
+  global $zbp;
+  $result = $zbp->$t . 'zb_users/plugin/FileIgnore/';
+  switch ($file) {
+    case 'vscode':
+      return $result . 'usr/app.code-workspace';
+      break;
+    case 'usr':
+      return $result . 'usr/';
+      break;
+    case 'var':
+      return $result . 'sources/';
+      break;
+    case 'main':
+      return $result . 'main.php';
+      break;
+    default:
+      return $result . $file;
+  }
+}
 function InstallPlugin_FileIgnore()
 {
   $FileIgnorePath = plugin_dir_path(__FILE__);
@@ -104,4 +157,5 @@ function InstallPlugin_FileIgnore()
   }
 }
 function UninstallPlugin_FileIgnore()
-{ }
+{
+}
