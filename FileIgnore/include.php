@@ -10,29 +10,36 @@ function ActivePlugin_FileIgnore()
 function FileIgnore_PluginEnb()
 {
   global $zbp;
-  if (GetVars('act', 'GET') !== "PluginEnb") {
+  $act = GetVars("act", "GET");
+  if ($act !== "PluginEnb" && $act !== "ThemeSet") {
     return false;
   }
+  if ($act == "PluginEnb") {
+    $appInfo = array("plugin", GetVars('name', 'GET'));
+  } else {
+    $appInfo = array("theme", GetVars('theme', 'POST'));
+  }
   $app = new App();
-  if ($app->LoadInfoByXml('plugin', GetVars('name', 'GET')) === true) {
-    $ID = $app->id;
-    $dir = $app->GetDir();
-    $ad = explode('|', $app->advanced_dependency);
-    // 遍历依赖插件并启用
-    foreach ($ad as $d) {
-      if (!$d) {
-        continue;
-      }
-      EnablePlugin($d);
+  if ($app->LoadInfoByXml($appInfo[0], $appInfo[1]) == false) {
+    return;
+  }
+  $ID = $app->id;
+  $dir = $app->GetDir();
+  $ad = explode('|', $app->advanced_dependency);
+  // 遍历依赖插件并启用
+  foreach ($ad as $d) {
+    if (!$d) {
+      continue;
     }
-    // 自动生存工作区文件
-    $fileVSCode = "{$dir}{$ID}.code-workspace";
-    $usrVSCode = FileIgnore_Path("vscode");
-    if (!is_file($fileVSCode) && is_file($usrVSCode)) {
-      $conVSCode = file_get_contents($usrVSCode);
-      $conVSCode = str_replace("-zbp_path-", str_replace("\\", '\\\\', ZBP_PATH), $conVSCode);
-      file_put_contents($fileVSCode, $conVSCode);
-    }
+    EnablePlugin($d);
+  }
+  // 自动生存工作区文件
+  $fileVSCode = "{$dir}{$ID}.code-workspace";
+  $usrVSCode = FileIgnore_Path("vscode");
+  if (!is_file($fileVSCode) && is_file($usrVSCode)) {
+    $conVSCode = file_get_contents($usrVSCode);
+    $conVSCode = str_replace("-zbp_path-", str_replace("\\", '\\\\', ZBP_PATH), $conVSCode);
+    file_put_contents($fileVSCode, $conVSCode);
   }
   // 应用中心开发模式开启
   $zbp->Config('AppCentre')->enabledevelop = true;
