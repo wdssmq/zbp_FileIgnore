@@ -44,16 +44,28 @@ function FileIgnore_PluginEnb()
   // 应用中心开发模式开启
   $zbp->Config('AppCentre')->enabledevelop = true;
   $zbp->SaveConfig('AppCentre');
+  // zblog 开发模式
+  $zbp->option['ZC_DEBUG_MODE'] = true;
+  $zbp->SaveOption();
 }
 function FileIgnore_update($app, &$dirs, &$files)
 {
   // global $zbp;
   $app->modified = date('Y-m-d', time());
   $app->SaveInfoByXml();
+  $dir = $app->GetDir();
+  if ($app->type === "theme") {
+    $arrCssFiles = $app->GetCssFiles();
+    $conCssFile = file_get_contents(array_shift($arrCssFiles));
+    $hash = crc32($conCssFile);
+    $curFile = "{$dir}template/header.php";
+    $conFile = file_get_contents($curFile);
+    file_put_contents($curFile, preg_replace("/(\.css|\.js)[^\"']*/", "$1?v=$hash", $conFile));
+  }
   if (!empty($app->include)) {
-    $file = "{$app->GetDir()}{$app->include}";
-    $fileStr = file_get_contents($file);
-    file_put_contents($file, preg_replace("/(\.css|\.js)\?v=[0-9\-]{10}/", "$1?v={$app->modified}", $fileStr));
+    $curFile = "{$dir}{$app->include}";
+    $conFile = file_get_contents($curFile);
+    file_put_contents($curFile, preg_replace("/(\.css|\.js)\?v=[0-9\-]{10}/", "$1?v={$app->modified}", $conFile));
   }
 }
 function FileIgnore_main($app, &$dirs, &$files)
