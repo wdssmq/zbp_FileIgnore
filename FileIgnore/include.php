@@ -74,13 +74,14 @@ function FileIgnore_main($app, &$dirs, &$files)
   InstallPlugin_FileIgnore();
   $FileIgnorePath = plugin_dir_path(__FILE__);
   $AppPath        = $app->GetDir();
-  $parser = array($FileIgnorePath . ".gitignore", $AppPath . ".gitignore");
-  $parser = FileIgnore_getIgnoreFilses($FileIgnorePath . ".gitignore", $AppPath, $parser);
+  if (is_file($AppPath . "zbignore.txt")) {
+    return;
+  }
+  $parser = array();
+  $parser = FileIgnore_getIgnoreFilses($FileIgnorePath . ".gitignore", $AppPath,  $parser);
   if (is_file($AppPath . ".gitignore")) {
     $parser = FileIgnore_getIgnoreFilses($AppPath . ".gitignore", $AppPath, $parser);
   }
-  // var_dump($parser);
-
   $LogPath = $FileIgnorePath . "cache/log.txt";
   file_put_contents($LogPath, "");
   file_put_contents($LogPath, json_encode($parser) . "\n");
@@ -96,25 +97,25 @@ function FileIgnore_main($app, &$dirs, &$files)
   file_put_contents($LogPath, "------\n\n", FILE_APPEND);
   for ($i = 0; $i < count($files); $i++) {
     file_put_contents($LogPath, "$i 、", FILE_APPEND);
-    // in_array(dirname($files[$i]), $parser) ||
     if (in_array($files[$i], $parser) || in_array(dirname($files[$i]), $parser)) {
       file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
       $files[$i] = "";
-    } elseif (!in_array(dirname($files[$i]) . "/", $dirs) && dirname($files[$i]) . "/" != $AppPath) {
-      file_put_contents($LogPath, $files[$i] . " 打包\n\n", FILE_APPEND);
-      $dirs[] = dirname($files[$i]) . "/";
+    } elseif ($files[$i] == "{$AppPath}.gitignore") {
+      file_put_contents($LogPath, $files[$i] . " 排除\n\n", FILE_APPEND);
+      $files[$i] = "";
     } else {
       file_put_contents($LogPath, $files[$i] . " 打包\n\n", FILE_APPEND);
     }
+    // 强制包含规则有问题，也不是很需要
   }
   $dirs = FileIgnore_ClearArray($dirs);
   $files = FileIgnore_ClearArray($files);
   // die();
 }
-function FileIgnore_getIgnoreFilses($rulFile, $dir, $matches = array())
+function FileIgnore_getIgnoreFilses($rulFile, $AppPath, $matches = array())
 {
-  $dir = trim($dir, "/");
   $lines = file($rulFile);
+  $dir = trim($AppPath, "/");
   foreach ($lines as $line) {
     // var_dump($matches);
     $line = trim($line);
@@ -122,11 +123,11 @@ function FileIgnore_getIgnoreFilses($rulFile, $dir, $matches = array())
     if (substr($line, 0, 1) == '#') continue;   # a comment
     if (substr($line, 0, 1) == '!') {           # negated glob
       $line = substr($line, 1);
-      $files = array_merge(glob("$dir/$line"), glob("$dir/$line/*"));
+      $files = array_merge(glob("{$dir}{$line}"), glob("{$dir}{$line}/*"));
       $matches = array_diff($matches, $files);
     } else {                                    # normal glob
-      $files = array_merge(glob("$dir/$line"), glob("$dir/$line/*"));
-      // $files = glob("$dir/$line");
+      $files = array_merge(glob("{$dir}{$line}"), glob("{$dir}{$line}/*"));
+      // $files = glob("$line");
     }
     // var_dump($files);
     $matches = array_merge($matches, $files);
