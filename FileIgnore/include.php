@@ -51,7 +51,22 @@ function FileIgnore_PluginEnb()
 function FileIgnore_update($app, &$dirs, &$files)
 {
   // global $zbp;
-  $app->modified = date('Y-m-d', time());
+  $modified = date('Y-m-d', time());
+  if ($modified !== $app->modified) {
+    $app->modified = $modified;
+  } else {
+    $arr = explode(".", $app->version);
+    if (count($arr) === 2) {
+      $arr[] = 0;
+    }
+    $arr[2]++;
+    // $arr[2] = $arr[2] % 2 == 0 ? $arr[2] + 1 : $arr[2] + 2;
+    if ($arr[2] >= 100) {
+      $arr[1]++;
+      $arr[2] = 0;
+    }
+    $app->version = join(".", $arr);
+  }
   $app->SaveInfoByXml();
   $dir = $app->GetDir();
   if ($app->type === "theme") {
