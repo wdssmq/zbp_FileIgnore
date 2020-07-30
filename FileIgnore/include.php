@@ -80,7 +80,8 @@ function FileIgnore_update($app, &$dirs, &$files)
   if (!empty($app->include)) {
     $curFile = "{$dir}{$app->include}";
     $conFile = file_get_contents($curFile);
-    file_put_contents($curFile, preg_replace("/(\.css|\.js)\?v=[0-9\-]{10}/", "$1?v={$app->modified}", $conFile));
+    $conFile = preg_replace("/\?v=[0-9\-]{10}/", "?v={$app->modified}", $conFile);
+    file_put_contents($curFile, $conFile);
   }
 }
 function FileIgnore_main($app, &$dirs, &$files)
