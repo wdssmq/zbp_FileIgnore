@@ -33,14 +33,21 @@ function FileIgnore_PluginEnb()
     }
     EnablePlugin($d);
   }
-  // 自动生存工作区文件
-  $fileVSCode = "{$dir}{$ID}.code-workspace";
-  $usrVSCode = FileIgnore_Path("vscode");
-  if (!is_file($fileVSCode) && is_file($usrVSCode)) {
-    $conVSCode = file_get_contents($usrVSCode);
+  // 自动生成工作区文件
+  $sFile = FileIgnore_Path("u-vscode");
+  $dFile = "{$dir}{$ID}.code-workspace";
+  if (is_file($sFile) && !is_file($dFile)) {
+    $conVSCode = file_get_contents($sFile);
     $conVSCode = str_replace("-zbp_path-", str_replace("\\", '\\\\', ZBP_PATH), $conVSCode);
-    file_put_contents($fileVSCode, $conVSCode);
+    file_put_contents($dFile, $conVSCode);
   }
+  // 自动创建zbignore
+  // $sFile = FileIgnore_Path("u-zbignore");
+  // $dFile = "{$dir}zbignore.txt";
+
+  // if (is_file($sFile) && !is_file($dFile)) {
+  //   copy($sFile, $dFile);
+  // }
   // 应用中心开发模式开启
   $zbp->Config('AppCentre')->enabledevelop = true;
   $zbp->SaveConfig('AppCentre');
@@ -165,7 +172,10 @@ function FileIgnore_Path($file, $t = 'path')
   global $zbp;
   $result = $zbp->$t . 'zb_users/plugin/FileIgnore/';
   switch ($file) {
-    case 'vscode':
+    case 'u-zbignore':
+      return $result . 'usr/zbignore.txt';
+      break;
+    case 'u-vscode':
       return $result . 'usr/app.code-workspace';
       break;
     case 'usr':
