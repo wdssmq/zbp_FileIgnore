@@ -25,14 +25,21 @@ function FileIgnore_PluginEnb()
   }
   $ID = $app->id;
   $dir = $app->GetDir();
+
+  // 遍历依赖插件并启用，仍然会报错，但是刷新下就好
   $ad = explode('|', $app->advanced_dependency);
-  // 遍历依赖插件并启用
   foreach ($ad as $d) {
     if (!$d) {
       continue;
     }
     EnablePlugin($d);
   }
+
+  // 通过创建并删除文件更新应用文件夹的时间
+  $file = "{$dir}DeleteMe.txt";
+  file_put_contents($file, "请删除这个文件");
+  unlink($file);
+
   // 自动生成工作区文件
   $sFile = FileIgnore_Path("u-vscode");
   $dFile = "{$dir}{$ID}.code-workspace";
@@ -41,13 +48,14 @@ function FileIgnore_PluginEnb()
     $conVSCode = str_replace("-zbp_path-", str_replace("\\", '\\\\', ZBP_PATH), $conVSCode);
     file_put_contents($dFile, $conVSCode);
   }
+
   // 自动创建zbignore
   // $sFile = FileIgnore_Path("u-zbignore");
   // $dFile = "{$dir}zbignore.txt";
-
   // if (is_file($sFile) && !is_file($dFile)) {
   //   copy($sFile, $dFile);
   // }
+
   // 应用中心开发模式开启
   $zbp->Config('AppCentre')->enabledevelop = true;
   $zbp->SaveConfig('AppCentre');
