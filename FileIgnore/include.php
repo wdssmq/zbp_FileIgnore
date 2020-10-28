@@ -75,7 +75,6 @@ function FileIgnore_update($app, &$dirs, &$files)
       $arr[] = 0;
     }
     $arr[2]++;
-    // $arr[2] = $arr[2] % 2 == 0 ? $arr[2] + 1 : $arr[2] + 2;
     if ($arr[2] >= 100) {
       $arr[1]++;
       $arr[2] = 0;
