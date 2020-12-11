@@ -6,6 +6,18 @@ function ActivePlugin_FileIgnore()
   Add_Filter_Plugin('Filter_Plugin_Cmd_Begin', 'FileIgnore_PluginEnb');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_main');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_update');
+  Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_BuildModule');
+}
+function FileIgnore_BuildModule()
+{
+  global $zbp;
+  $zbp->AddBuildModule('previous');
+  $zbp->AddBuildModule('calendar');
+  $zbp->AddBuildModule('comments');
+  $zbp->AddBuildModule('archives');
+  $zbp->AddBuildModule('tags');
+  $zbp->AddBuildModule('authors');
+  $zbp->BuildModule();
 }
 function FileIgnore_PluginEnb()
 {
