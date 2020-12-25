@@ -156,8 +156,7 @@ function FileIgnore_main($app, &$dirs, &$files)
 function FileIgnore_getIgnoreFilses($rulFile, $AppPath, $matches = array())
 {
   $lines = file($rulFile);
-  // $dir = trim($AppPath, "/");
-  $dir = trim($AppPath);
+  $dir = trim($AppPath, "/");
   foreach ($lines as $line) {
     // var_dump($matches);
     $line = trim($line);
@@ -165,10 +164,10 @@ function FileIgnore_getIgnoreFilses($rulFile, $AppPath, $matches = array())
     if (substr($line, 0, 1) == '#') continue;   # a comment
     if (substr($line, 0, 1) == '!') {           # negated glob
       $line = substr($line, 1);
-      $files = array_merge(glob("{$dir}{$line}"), glob("{$dir}{$line}/*"));
+      $files = array_merge(glob("{$dir}/{$line}"), glob("{$dir}/{$line}/*"));
       $matches = array_diff($matches, $files);
     } else {                                    # normal glob
-      $files = array_merge(glob("{$dir}{$line}"), glob("{$dir}{$line}/*"));
+      $files = array_merge(glob("{$dir}/{$line}"), glob("{$dir}/{$line}/*"));
       // $files = glob("$line");
     }
     // var_dump($files);
