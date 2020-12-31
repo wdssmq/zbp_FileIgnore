@@ -1,10 +1,11 @@
-usr/*
 input/*
 bin/*
-dev
-build
+log/*
+usr/*
 config
-db
+build
 cache
+dev
+db
 *.code-workspace
 DeleteMe.txt
