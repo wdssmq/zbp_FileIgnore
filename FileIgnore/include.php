@@ -6,7 +6,18 @@ function ActivePlugin_FileIgnore()
   Add_Filter_Plugin('Filter_Plugin_Cmd_Begin', 'FileIgnore_PluginEnb');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_main');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_update');
+  Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_Debug');
   // Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_BuildModule');
+}
+function FileIgnore_Debug()
+{
+  global $zbp;
+  $cookie = GetVars('plug_debug', 'COOKIE');
+  if (empty($cookie)) {
+    return;
+  }
+  setcookie($cookie, "", 0, $zbp->cookiespath);
+  setcookie("plug_debug", "", 0, $zbp->cookiespath);
 }
 // function FileIgnore_BuildModule()
 // {
@@ -70,7 +81,7 @@ function FileIgnore_PluginEnb()
   $zbp->option['ZC_DEBUG_MODE'] = true;
   $zbp->SaveOption();
 
-  FileIgnore_SubList($dir);
+  FileIgnore_SubList($dir, $app->author_name);
 }
 function FileIgnore_update($app, &$dirs, &$files)
 {
@@ -107,7 +118,7 @@ function FileIgnore_update($app, &$dirs, &$files)
     file_put_contents($curFile, $conFile);
   }
 
-  FileIgnore_SubList($dir);
+  FileIgnore_SubList($dir, $app->author_name);
 }
 function FileIgnore_main($app, &$dirs, &$files)
 {
@@ -186,18 +197,23 @@ function FileIgnore_ClearArray($arr)
   return $result;
 }
 // 启用及导出时调用
-function FileIgnore_SubList($appPath)
+function FileIgnore_SubList($appPath, $author_name)
 {
+  global $zbp;
+  // 通过创建并删除文件更新应用文件夹的时间
+  $file = "{$appPath}DeleteMe.txt";
+  file_put_contents($file, "请删除这个文件");
+  unlink($file);
+  $devName = $zbp->Config('FileIgnore')->devName;
+  if ($author_name !== $devName) {
+    return;
+  }
   // 自动复制about.php
   $sFile = FileIgnore_Path("u-about");
   $dFile = "{$appPath}about.php";
   if (is_file($sFile) && !is_file($dFile)) {
     copy($sFile, $dFile);
   }
-  // 通过创建并删除文件更新应用文件夹的时间
-  $file = "{$appPath}DeleteMe.txt";
-  file_put_contents($file, "请删除这个文件");
-  unlink($file);
 }
 function FileIgnore_Path($file, $t = 'path')
 {
