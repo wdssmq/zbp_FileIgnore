@@ -1,7 +1,7 @@
 <style type="text/css">
   #divMain2.xnxf {
     position: relative;
-    min-height: 567px;
+    margin-bottom: 3rem;
   }
 
   #divMain .SubMenu {
@@ -30,13 +30,13 @@
   }
 
   #xnxf-contrib.xnxf {
+    position: absolute;
     display: block;
     background-color: #fff;
-    position: absolute;
+    box-shadow: 0 0 0.1em rgb(0 0 0 / 30%);
     left: 0;
     top: 0;
     right: 0;
-    height: 100%;
   }
 
   #xnxf-contrib>* {
@@ -97,7 +97,7 @@
     <img src="https://raw.githubusercontent.com/wdssmq/wdssmq/main/doc/qr-wx.png" alt="qr-wx" title="qr-wx" style="max-width:100%;">
     <img src="https://raw.githubusercontent.com/wdssmq/wdssmq/main/doc/qr-ali.png" alt="qr-ali" title="qr-ali" style="max-width:100%;">
   </div>
-  <div style="min-height: 59px;"></div>
+  <div style="min-height: 37px;"></div>
 </div>
 <div style="clear: both"></div>
 <script type="text/javascript">

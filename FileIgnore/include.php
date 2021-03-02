@@ -211,7 +211,7 @@ function FileIgnore_SubList($appPath, $author_name)
   // 自动复制about.php
   $sFile = FileIgnore_Path("u-about");
   $dFile = "{$appPath}about.php";
-  if (is_file($sFile) && !is_file($dFile)) {
+  if (is_file($sFile) && $appPath !== FileIgnore_Path("")) {
     copy($sFile, $dFile);
   }
 }
