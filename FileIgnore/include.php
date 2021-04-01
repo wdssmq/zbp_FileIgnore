@@ -87,19 +87,19 @@ function FileIgnore_update($app, &$dirs, &$files)
 {
   // global $zbp;
   $modified = date('Y-m-d', time());
+  $arrVer = explode(".", $app->version);
   if ($modified !== $app->modified) {
     $app->modified = $modified;
   } else {
-    $arr = explode(".", $app->version);
-    if (count($arr) === 2) {
-      $arr[] = 0;
+    if (count($arrVer) === 2) {
+      $arrVer[] = 0;
     }
-    $arr[2]++;
-    if ($arr[2] >= 100) {
-      $arr[1]++;
-      $arr[2] = 0;
+    $arrVer[2]++;
+    if ($arrVer[2] >= 100) {
+      $arrVer[1]++;
+      $arrVer[2] = 0;
     }
-    $app->version = join(".", $arr);
+    $app->version = join(".", $arrVer);
   }
   $app->SaveInfoByXml();
   $dir = $app->GetDir();
@@ -110,11 +110,16 @@ function FileIgnore_update($app, &$dirs, &$files)
     $curFile = "{$dir}template/header.php";
     $conFile = file_get_contents($curFile);
     file_put_contents($curFile, preg_replace("/(\.css|\.js)[^\"']*/", "$1?v=$hash", $conFile));
+    $curFile = "{$dir}template/footer.php";
+    $conFile = file_get_contents($curFile);
+    file_put_contents($curFile, preg_replace("/(\.css|\.js)[^\"']*/", "$1?v=$hash", $conFile));
   }
   if (!empty($app->include)) {
+    $hash = str_replace("-", "", $app->modified);
+    $hash .= join("", $arrVer);
     $curFile = "{$dir}{$app->include}";
     $conFile = file_get_contents($curFile);
-    $conFile = preg_replace("/\?v=[0-9\-]{10}/", "?v={$app->modified}", $conFile);
+    $conFile = preg_replace("/\?v=[0-9\-]{10,}/", "?v={$hash}", $conFile);
     file_put_contents($curFile, $conFile);
   }
 
