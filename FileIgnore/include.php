@@ -211,6 +211,7 @@ function FileIgnore_SubList($appPath, $author_name)
   unlink($file);
   $devName = $zbp->Config('FileIgnore')->devName;
   if ($author_name !== $devName) {
+    $zbp->SetHint("tips", "FileIgnore：未设置作者或者与设置不同");
     return;
   }
   // 自动复制about.php
