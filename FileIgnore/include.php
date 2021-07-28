@@ -13,6 +13,11 @@ function FileIgnore_Debug()
 {
   global $zbp;
   $cookie = GetVars('plug_debug', 'COOKIE');
+  $dev = GetVars("dev", "GET");
+  if ($dev !== null) {
+    $zbp->BuildTemplate();
+    Redirect($zbp->host);
+  }
   if (empty($cookie)) {
     return;
   }
@@ -250,6 +255,7 @@ function FileIgnore_Path($file, $t = 'path')
 }
 function InstallPlugin_FileIgnore()
 {
+  global $zbp;
   $FileIgnorePath = plugin_dir_path(__FILE__);
   $IgnorePath     = $FileIgnorePath . ".gitignore";
   if (!file_exists($IgnorePath)) {
@@ -258,6 +264,13 @@ function InstallPlugin_FileIgnore()
   if (!file_exists($FileIgnorePath . "cache/")) {
     mkdir($FileIgnorePath . "cache/", 0755);
   }
+  // 应用中心开发模式开启
+  $zbp->Config('AppCentre')->enabledevelop = true;
+  $zbp->SaveConfig('AppCentre');
+  // zblog 开发模式
+  $zbp->option['ZC_DEBUG_MODE'] = true;
+  $zbp->SaveOption();
+  $zbp->SetHint("good", "已经启用开发模式");
 }
 function UninstallPlugin_FileIgnore()
 {
