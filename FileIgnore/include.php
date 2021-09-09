@@ -12,29 +12,34 @@ function ActivePlugin_FileIgnore()
 function FileIgnore_Debug()
 {
   global $zbp;
-  $cookie = GetVars('plug_debug', 'COOKIE');
   $dev = GetVars("dev", "GET");
   if ($dev !== null) {
+    if ($zbp->CheckPlugin('mzGrunt')) {
+      mzGrunt_CheckLiveReload(1);
+    }
     $zbp->BuildTemplate();
-    Redirect($zbp->host);
+    FileIgnore_BuildModule();
+    Redirect($zbp->fullcurrenturl);
   }
+  $cookie = GetVars('plug_debug', 'COOKIE');
   if (empty($cookie)) {
     return;
   }
   setcookie($cookie, "", 0, $zbp->cookiespath);
   setcookie("plug_debug", "", 0, $zbp->cookiespath);
 }
-// function FileIgnore_BuildModule()
-// {
-//   global $zbp;
-//   $zbp->AddBuildModule('previous');
-//   $zbp->AddBuildModule('calendar');
-//   $zbp->AddBuildModule('comments');
-//   $zbp->AddBuildModule('archives');
-//   $zbp->AddBuildModule('tags');
-//   $zbp->AddBuildModule('authors');
-//   $zbp->BuildModule();
-// }
+function FileIgnore_BuildModule()
+{
+  global $zbp;
+  $zbp->AddBuildModule('catalog');
+  $zbp->AddBuildModule('previous');
+  $zbp->AddBuildModule('calendar');
+  $zbp->AddBuildModule('comments');
+  $zbp->AddBuildModule('archives');
+  $zbp->AddBuildModule('tags');
+  $zbp->AddBuildModule('authors');
+  $zbp->BuildModule();
+}
 function FileIgnore_PluginEnb()
 {
   global $zbp;
