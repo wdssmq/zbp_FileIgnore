@@ -7,7 +7,6 @@ function ActivePlugin_FileIgnore()
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_main');
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_update');
   Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_Debug');
-  // Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_BuildModule');
 }
 function FileIgnore_Debug()
 {
@@ -77,7 +76,7 @@ function FileIgnore_PluginEnb()
     file_put_contents($dFile, $conVSCode);
   }
 
-  // 自动创建zbignore
+  // 自动创建 zbignore
   // $sFile = FileIgnore_Path("u-zbignore");
   // $dFile = "{$dir}zbignore.txt";
   // if (is_file($sFile) && !is_file($dFile)) {
@@ -219,6 +218,7 @@ function FileIgnore_SubList($appPath, $author_name)
   $file = "{$appPath}DeleteMe.txt";
   file_put_contents($file, "请删除这个文件");
   unlink($file);
+  // 对于设定的应用作者
   $devName = $zbp->Config('FileIgnore')->devName;
   if ($author_name !== $devName) {
     $zbp->SetHint("tips", "FileIgnore：未设置作者或者与设置不同");

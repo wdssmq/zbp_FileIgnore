@@ -39,7 +39,7 @@ require $blogpath . 'zb_system/admin/admin_top.php';
   </div>
   <div class="SubMenu">
     <a href="main.php" title="首页"><span class="m-left m-now">首页</span></a>
-    <?php require_once "about.php"; ?>
+    <?php require "about.php"; ?>
   </div>
   <div id="divMain2">
     <form action="<?php echo BuildSafeURL("main.php?act=save"); ?>" method="post">
