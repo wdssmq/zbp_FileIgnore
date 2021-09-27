@@ -1,6 +1,7 @@
 input/*
 bin/*
 log/*
+logs/*
 usr/*
 config
 build
