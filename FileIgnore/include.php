@@ -254,6 +254,26 @@ function FileIgnore_Path($file, $t = 'path')
       return $result . $file;
   }
 }
+function FileIgnore_IsFile()
+{
+  $arr = array(
+    "u-about",
+    "u-vscode"
+  );
+  $tpl = '<p style="margin: 0;padding: 0;">{$fileName}：{$isFile}</p>';
+  $rlt = '';
+  foreach ($arr as $item) {
+    $file = FileIgnore_Path($item);
+    $fileDisplay = str_replace(FileIgnore_Path(""), "FileIgnore/", $file);
+    if (is_file($file)) {
+      $isFile = "存在";
+    } else {
+      $isFile = "不存在";
+    }
+    $rlt .= str_replace(array('{$fileName}', '{$isFile}'), array($fileDisplay, $isFile), $tpl);
+  }
+  return $rlt;
+}
 function InstallPlugin_FileIgnore()
 {
   global $zbp;
