@@ -9,4 +9,5 @@ cache
 dev
 db
 *.code-workspace
+!usr_cfg/app.code-workspace
 DeleteMe.txt
