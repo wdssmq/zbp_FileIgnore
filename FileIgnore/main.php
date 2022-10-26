@@ -1,6 +1,7 @@
 <?php
 require '../../../zb_system/function/c_system_base.php';
 require '../../../zb_system/function/c_system_admin.php';
+require 'function.php';
 $zbp->Load();
 $action = 'root';
 if (!$zbp->CheckRights($action)) {
@@ -16,6 +17,10 @@ $act = GetVars('act', 'GET');
 $suc = GetVars('suc', 'GET');
 if ($act == 'save') {
   CheckIsRefererValid();
+  // 修改编辑器
+  $edt = GetVars("read_edt", "POST");
+  FileIgnore_SetCurEdt($edt);
+  // 保存配置项
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, 5) == 'read_') {
       continue;
@@ -55,8 +60,13 @@ require $blogpath . 'zb_system/admin/admin_top.php';
         </tr>
         <tr>
           <td>配置文件</td>
-          <td><?php echo FileIgnore_IsFile();?></td>
+          <td><?php echo FileIgnore_IsFile(); ?></td>
           <td>启用或打包应用时会自动复制到应用文件夹；</td>
+        </tr>
+        <tr>
+          <td>编辑器切换</td>
+          <td><?php zbpform::radio('read_edt', $edtList, FileIgnore_GetCurEdt());; ?></td>
+          <td></td>
         </tr>
         <tr>
           <td></td>
