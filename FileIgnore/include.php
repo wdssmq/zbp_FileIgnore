@@ -1,6 +1,7 @@
 <?php
-//注册插件
+// 注册插件
 RegisterPlugin("FileIgnore", "ActivePlugin_FileIgnore");
+
 function ActivePlugin_FileIgnore()
 {
   Add_Filter_Plugin('Filter_Plugin_Cmd_Begin', 'FileIgnore_PluginEnb');
@@ -8,6 +9,7 @@ function ActivePlugin_FileIgnore()
   Add_Filter_Plugin('Filter_Plugin_App_Pack', 'FileIgnore_update');
   Add_Filter_Plugin('Filter_Plugin_Index_End', 'FileIgnore_Debug');
 }
+
 function FileIgnore_Debug()
 {
   global $zbp;
@@ -27,6 +29,7 @@ function FileIgnore_Debug()
   setcookie($cookie, "", 0, $zbp->cookiespath);
   setcookie("plug_debug", "", 0, $zbp->cookiespath);
 }
+
 function FileIgnore_BuildModule()
 {
   global $zbp;
@@ -39,6 +42,7 @@ function FileIgnore_BuildModule()
   $zbp->AddBuildModule('authors');
   $zbp->BuildModule();
 }
+
 function FileIgnore_PluginEnb()
 {
   global $zbp;
@@ -92,6 +96,7 @@ function FileIgnore_PluginEnb()
 
   FileIgnore_SubList($dir, $app->author_name);
 }
+
 function FileIgnore_update($app, &$dirs, &$files)
 {
   // global $zbp;
@@ -134,6 +139,7 @@ function FileIgnore_update($app, &$dirs, &$files)
 
   FileIgnore_SubList($dir, $app->author_name);
 }
+
 function FileIgnore_main($app, &$dirs, &$files)
 {
   global $zbp;
@@ -178,6 +184,7 @@ function FileIgnore_main($app, &$dirs, &$files)
   $files = FileIgnore_ClearArray($files);
   // die();
 }
+
 function FileIgnore_getIgnoreFilses($rulFile, $AppPath, $matches = array())
 {
   $lines = file($rulFile);
@@ -197,6 +204,7 @@ function FileIgnore_getIgnoreFilses($rulFile, $AppPath, $matches = array())
   }
   return array_unique($matches);
 }
+
 function FileIgnore_ClearArray($arr)
 {
   $result = array();
@@ -206,6 +214,7 @@ function FileIgnore_ClearArray($arr)
   }
   return $result;
 }
+
 // 启用及导出时调用
 function FileIgnore_SubList($appPath, $author_name)
 {
@@ -217,7 +226,9 @@ function FileIgnore_SubList($appPath, $author_name)
   // 对于设定的应用作者
   $devName = $zbp->Config('FileIgnore')->devName;
   if ($author_name !== $devName) {
-    $zbp->SetHint("tips", "FileIgnore：未设置作者或者与设置不同");
+    $mainUrl = FileIgnore_Path("main", "host");
+    $aUrl = "<a href='{$mainUrl}' target='_blank'>FileIgnore</a>";
+    $zbp->SetHint("tips", "FileIgnore：未设置作者或者与设置不同 {$aUrl}");
     return;
   }
   // 自动复制about.php
@@ -227,6 +238,7 @@ function FileIgnore_SubList($appPath, $author_name)
     copy($sFile, $dFile);
   }
 }
+
 function FileIgnore_Path($file, $t = 'path')
 {
   global $zbp;
@@ -254,6 +266,7 @@ function FileIgnore_Path($file, $t = 'path')
       return $result . $file;
   }
 }
+
 function FileIgnore_IsFile()
 {
   $arr = array(
@@ -274,6 +287,7 @@ function FileIgnore_IsFile()
   }
   return $rlt;
 }
+
 function InstallPlugin_FileIgnore()
 {
   global $zbp;
@@ -293,6 +307,7 @@ function InstallPlugin_FileIgnore()
   $zbp->SaveOption();
   $zbp->SetHint("good", "已经启用开发模式");
 }
+
 function UninstallPlugin_FileIgnore()
 {
 }
