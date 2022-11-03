@@ -33,7 +33,7 @@ if ($act == 'save') {
   Redirect('./main.php' . ($suc == null ? '' : "?act={$suc}"));
 }
 
-$blogtitle = 'FileIgnore';
+$blogtitle = '开发者工具';
 require $blogpath . 'zb_system/admin/admin_header.php';
 require $blogpath . 'zb_system/admin/admin_top.php';
 ?>
