@@ -20,6 +20,12 @@ if ($act == 'save') {
   // 修改编辑器
   $edt = GetVars("read_edt", "POST");
   FileIgnore_SetCurEdt($edt);
+  // 切换插件启用
+  $switch = GetVars("read_switch", "POST");
+  $switchTo = GetVars("read_switchTo", "POST");
+  if ($switch == 1) {
+    FileIgnore_PlugGroupSwitch($switchTo);
+  }
   // 保存配置项
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, 5) == 'read_') {
@@ -32,6 +38,9 @@ if ($act == 'save') {
   $zbp->SetHint('good');
   Redirect('./main.php' . ($suc == null ? '' : "?act={$suc}"));
 }
+
+$cfgPlugGroup = FileIgnore_GetPlugGroupCFG();
+
 
 $blogtitle = '开发者工具';
 require $blogpath . 'zb_system/admin/admin_header.php';
@@ -67,6 +76,22 @@ require $blogpath . 'zb_system/admin/admin_top.php';
           <td>编辑器切换</td>
           <td><?php zbpform::radio('read_edt', $edtList, FileIgnore_GetCurEdt());; ?></td>
           <td></td>
+        </tr>
+        <tr>
+          <td>切换插件启用</td>
+          <td>
+            <?php if ($cfgPlugGroup->hasGroup) {
+              echo FileIgnore_BuildPlugGroupForm($cfgPlugGroup, 0);
+              echo '<label for="read_switch">执行切换：</label>';
+              echo zbpform::zbradio('read_switch', 0);
+            } else {
+              echo '无分组配置，请复制一份 /usr_cfg/plugin-group.json 到 /usr/plugin-group.json';
+            } ?>
+
+          </td>
+          <td>
+            启用「指定分组 + 固定分组」中的插件，停用其他插件
+          </td>
         </tr>
         <tr>
           <td></td>

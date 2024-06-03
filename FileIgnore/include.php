@@ -253,6 +253,9 @@ function FileIgnore_Path($file, $t = 'path')
     case 'u-about':
       return $result . 'usr/about.php';
       break;
+    case 'u-plugin-group':
+      return $result . 'usr/plugin-group.json';
+      break;
     case 'usr':
       return $result . 'usr/';
       break;
