@@ -231,11 +231,73 @@ function FileIgnore_SubList($appPath, $author_name)
     $zbp->SetHint("tips", "FileIgnore：未设置作者或者与设置不同 {$aUrl}");
     return;
   }
-  // 自动复制about.php
-  $sFile = FileIgnore_Path("u-about");
-  $dFile = "{$appPath}about.php";
-  if (is_file($sFile) && $appPath !== FileIgnore_Path("")) {
-    copy($sFile, $dFile);
+  // 基于 usr/.copy 自动复制文件
+  if ($appPath !== FileIgnore_Path("")) {
+    FileIgnore_CopyFromList($appPath);
+  }
+}
+
+function FileIgnore_CopyFromList($appPath)
+{
+  $usrPath = FileIgnore_Path("usr");
+  $copyList = $usrPath . ".copy";
+  if (!is_file($copyList)) {
+    return;
+  }
+  $lines = file($copyList, FILE_IGNORE_NEW_LINES);
+  foreach ($lines as $line) {
+    $line = trim($line);
+    if ($line === '' || substr($line, 0, 1) === '#') {
+      continue;
+    }
+
+    $line = str_replace("\\", "/", $line);
+    $relPath = ltrim($line, "/");
+    if ($relPath === '' || strpos($relPath, "..") !== false) {
+      continue;
+    }
+
+    $srcPath = $usrPath . $relPath;
+    $destPath = $appPath . $relPath;
+
+    if (is_file($srcPath)) {
+      FileIgnore_EnsureDir(dirname($destPath));
+      copy($srcPath, $destPath);
+      continue;
+    }
+
+    if (is_dir($srcPath)) {
+      FileIgnore_CopyDir($srcPath, $destPath);
+    }
+  }
+}
+
+function FileIgnore_CopyDir($srcDir, $destDir)
+{
+  if (!is_dir($srcDir)) {
+    return;
+  }
+  FileIgnore_EnsureDir($destDir);
+  $items = scandir($srcDir);
+  foreach ($items as $item) {
+    if ($item === '.' || $item === '..') {
+      continue;
+    }
+    $srcPath = $srcDir . '/' . $item;
+    $destPath = $destDir . '/' . $item;
+    if (is_dir($srcPath)) {
+      FileIgnore_CopyDir($srcPath, $destPath);
+    } else {
+      FileIgnore_EnsureDir(dirname($destPath));
+      copy($srcPath, $destPath);
+    }
+  }
+}
+
+function FileIgnore_EnsureDir($dir)
+{
+  if (!is_dir($dir)) {
+    mkdir($dir, 0755, true);
   }
 }
 
