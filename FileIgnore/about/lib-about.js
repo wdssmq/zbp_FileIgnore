@@ -1,8 +1,8 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.mzAbout = factory());
-})(this, (function () { 'use strict';
+(function(global, factory) {
+  typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() :
+    typeof define === "function" && define.amd ? define(factory) :
+      (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.mzAbout = factory());
+})(this, (function() { "use strict";
 
   // localStorage 封装
   const lsObj = {
@@ -24,13 +24,13 @@
     if ( ref === void 0 ) ref = {};
     var insertAt = ref.insertAt;
 
-    if (typeof document === 'undefined') { return; }
+    if (typeof document === "undefined") { return; }
 
-    var head = document.head || document.getElementsByTagName('head')[0];
-    var style = document.createElement('style');
-    style.type = 'text/css';
+    var head = document.head || document.getElementsByTagName("head")[0];
+    var style = document.createElement("style");
+    style.type = "text/css";
 
-    if (insertAt === 'top') {
+    if (insertAt === "top") {
       if (head.firstChild) {
         head.insertBefore(style, head.firstChild);
       } else {
