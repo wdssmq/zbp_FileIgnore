@@ -1,8 +1,9 @@
 ## 插件仓库
 
-> wdssmq/zbp\_FileIgnore
+> wdssmq/zbp\_FileIgnore: 「废弃」Z-BlogPHP 开发辅助插件
 >
-> [https://github.com/wdssmq/zbp_FileIgnore](https://github.com/wdssmq/zbp_FileIgnore "wdssmq/zbp\_FileIgnore")
+> [https://github.com/wdssmq/zbp_FileIgnore](https://github.com/wdssmq/zbp_FileIgnore "wdssmq/zbp\_FileIgnore: 「废弃」Z-BlogPHP 开发辅助插件")
+
 
 ## 说明
 
